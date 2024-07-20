@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+</head>
+<body>
+    <h1>Weather Forecast</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Get Weather</button>
+    </form>
+
+    {% if last_city %}
+    <p>Last city you searched: <a href="?city={{ last_city }}">{{ last_city }}</a></p>
+    {% endif %}
+
+    {% if weather_data %}
+    <h2>Weather in {{ weather_data.name }}</h2>
+    <p>Temperature: {{ weather_data.main.temp }} °C</p>
+    <p>Weather: {{ weather_data.weather.0.description }}</p>
+    {% endif %}
+
+    <h3>Your Search History</h3>
+    <ul>
+        {% for search in search_history %}
+        <li><a href="?city={{ search.city }}">{{ search.city }}</a> - {{ search.last_searched }}</li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        $(document).ready(function() {
+            $("#id_city").autocomplete({
+                source: "{% url 'city-autocomplete' %}"
+            });
+        });
+    </script>
+</body>
+</html>
